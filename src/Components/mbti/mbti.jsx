@@ -25,7 +25,7 @@ const MBTITest = () => {
     console.log('Current Question:', currentQuestion);
     console.log('Show Result:', showResult);
 
-    // Получаем количество вопросов
+    // Количество вопросов
     const totalQuestions = questions.length;
 
     const checkResult = () => {
@@ -48,7 +48,6 @@ const MBTITest = () => {
           case 'Не согласен':
             break;
           case 'Не знаю':
-            // Увеличиваем счетчик "Не знаю" (можно присвоить половину балла)
             doNotKnowCount += 0;
             break;
           default:
@@ -69,12 +68,15 @@ const MBTITest = () => {
       // Собираем все четыре характеристики вместе, чтобы получить полный тип личности
       const personalityType = extraversion + sensing + thinking + judging;
 
+      {localStorage.setItem('type', personalityType)}
       // Устанавливаем результат в состояние
       setResult(`Ваш тип личности: ${personalityType}`);
     };
 
     if (showResult && Object.keys(answers).length === totalQuestions) {
       checkResult();
+
+      localStorage.setItem('answers', JSON.stringify(answers));
     }
   }, [answers, currentQuestion, showResult, questions]);
 
@@ -99,9 +101,15 @@ const MBTITest = () => {
       {showResult && (
         <div>
           <h2>Результаты теста</h2>
-          {result ? <p>{result}</p> : <p>Вычисление результата...</p>}
+          {result ? (
+          <p>{result}</p>
+          )
+           : <p>Вычисление результата...</p>}
         </div>
+
+
       )}
+      {/* {localStorage.setItem('type', result)} */}      
     </div>
   );
 };
