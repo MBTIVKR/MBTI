@@ -24,17 +24,18 @@ const MBTITest = () => {
     console.log('Answers:', answers);
     console.log('Current Question:', currentQuestion);
     console.log('Show Result:', showResult);
-  
+
     // Получаем количество вопросов
     const totalQuestions = questions.length;
-  
+
     const checkResult = () => {
-      // Инициализация счетчиков для каждой характеристики
+      // Инициализация счетчиков для каждой характеристики, включая "Не знаю"
       let extraversionCount = 0;
       let sensingCount = 0;
       let thinkingCount = 0;
       let judgingCount = 0;
-  
+      let doNotKnowCount = 0;
+
       // Перебираем все ответы и увеличиваем соответствующие счетчики
       Object.values(answers).forEach((answer) => {
         switch (answer) {
@@ -47,26 +48,31 @@ const MBTITest = () => {
           case 'Не согласен':
             break;
           case 'Не знаю':
-            // Можете решить, как учесть "Не знаю" в баллах (например, присвоить половину балла)
+            // Увеличиваем счетчик "Не знаю" (можно присвоить половину балла)
+            doNotKnowCount += 0;
             break;
           default:
             break;
         }
       });
-  
-      // Логика для определения каждой из четырех бинарных характеристик
-      const extraversion = extraversionCount >= totalQuestions / 2 ? 'E' : 'I';
-      const sensing = sensingCount >= totalQuestions / 2 ? 'S' : 'N';
-      const thinking = thinkingCount >= totalQuestions / 2 ? 'T' : 'F';
-      const judging = judgingCount >= totalQuestions / 2 ? 'J' : 'P';
-  
+
+      // Логика для определения каждой из четырех бинарных характеристик, включая "Не знаю"
+      const extraversion =
+        extraversionCount + doNotKnowCount >= totalQuestions / 2 ? 'E' : 'I';
+      const sensing =
+        sensingCount + doNotKnowCount >= totalQuestions / 2 ? 'S' : 'N';
+      const thinking =
+        thinkingCount + doNotKnowCount >= totalQuestions / 2 ? 'T' : 'F';
+      const judging =
+        judgingCount + doNotKnowCount >= totalQuestions / 2 ? 'J' : 'P';
+
       // Собираем все четыре характеристики вместе, чтобы получить полный тип личности
       const personalityType = extraversion + sensing + thinking + judging;
-  
+
       // Устанавливаем результат в состояние
       setResult(`Ваш тип личности: ${personalityType}`);
     };
-  
+
     if (showResult && Object.keys(answers).length === totalQuestions) {
       checkResult();
     }
@@ -79,7 +85,12 @@ const MBTITest = () => {
         <div>
           <p>{questions[currentQuestion].text}</p>
           {questions[currentQuestion].options.map((option, index) => (
-            <button key={index} onClick={() => handleAnswer(questions[currentQuestion].id, option)}>
+            <button
+              key={index}
+              onClick={() =>
+                handleAnswer(questions[currentQuestion].id, option)
+              }
+            >
               {option}
             </button>
           ))}
